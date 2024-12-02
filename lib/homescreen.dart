@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:samplevarun/chatscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         actions: [
-          Icon(CupertinoIcons.bubble_left_bubble_right_fill,color: Colors.lightBlueAccent,),
+          IconButton(onPressed: (){
+            Navigator.pushNamed(context, ''
+                'chat');
+          }, icon: Icon(CupertinoIcons.bubble_left_bubble_right_fill,color: Colors.lightBlueAccent,),),
+
          SizedBox(width: 20,)
         ],
       ),

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:samplevarun/chatscreen.dart';
+import 'package:samplevarun/model/userloginmodel.dart';
+import 'package:samplevarun/repo/userrepo.dart';
 
 import 'homescreen.dart';
 
@@ -23,10 +26,14 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         // Use builder only if you need to use library outside ScreenUtilInit context
         builder: (_, child) {
-          return const MaterialApp(
+          return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             home: MyHomePage(title: 'Flutter Demo Home Page'),
+            routes: {
+              'chat': (context) => ChatScreen(),
+              '/home': (context) => HomeScreen(),
+            },
           );
         });
   }
@@ -43,6 +50,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   void _incrementCounter() {
     setState(() {});
@@ -71,13 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 40,
                       width: 40,
                       decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
+                          shape: BoxShape.circle,
                           image: DecorationImage(
                               image: AssetImage("images/logo.jpg"))),
                     ),
                   ),
                   Positioned(
-                    top: 5 ,
+                    top: 5,
                     left: 50,
                     child: Container(
                       height: 50,
@@ -101,6 +110,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SafeArea(
+                    child: Text(
+                      "WELCOME BACK",
+                      style: GoogleFonts.acmeTextTheme()
+                          .labelLarge!
+                          .copyWith(fontSize: 32),
+                    ),
+                  ),
                   Text(
                     "WELCOME BACK",
                     style: GoogleFonts.acmeTextTheme()
@@ -112,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: MediaQuery.of(context).size.width * 0.35,
                     padding: const EdgeInsets.only(left: 50, right: 50),
                     child: TextFormField(
+                      controller: userNameController,
                       decoration: InputDecoration(
                           labelText: "User Name",
                           border: OutlineInputBorder(
@@ -123,6 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: MediaQuery.of(context).size.width * 0.35,
                     padding: const EdgeInsets.only(left: 50, right: 50),
                     child: TextFormField(
+                      controller: passwordController,
+                      obscureText: true,
                       decoration: InputDecoration(
                           labelText: "Password",
                           border: OutlineInputBorder(
@@ -134,8 +154,34 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 40,
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                      onPressed: () async {
+                      UserLoginModel? userLogiModel =   await UserRepo().loginRepo(
+                          userName: userNameController.text,
+                          password: passwordController.text,
+                        );
+                      if(userLogiModel!.statusCode == 200){
+                        Navigator.pushNamed(context, '/home',arguments: userLogiModel);
+
+                      }
+                      else {
+                        showDialog(
+                          context: context,
+                           builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Login Failed"),
+                              content: Text("Invalid Credentials"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Ok"),
+                                ),
+                              ],
+                            );
+                           },
+                        );
+                      }
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue),
@@ -171,18 +217,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   20.verticalSpace,
-                  const Text("Or Continue with",style: TextStyle(color: Colors.blueGrey),),
-                   10.verticalSpace,
-                   const SizedBox(
-                     width: 200,
-                     child: Row(
+                  const Text(
+                    "Or Continue with",
+                    style: TextStyle(color: Colors.blueGrey),
+                  ),
+                  10.verticalSpace,
+                  const SizedBox(
+                    width: 200,
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(
                             height: 30,
                             width: 30,
                             child: Image(
-                                image: NetworkImage("assets/images/google.png"))),
+                                image:
+                                    NetworkImage("assets/images/google.png"))),
                         SizedBox(
                             height: 30,
                             width: 30,
@@ -190,8 +240,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 image:
                                     NetworkImage("assets/images/facebook.png")))
                       ],
-                                       ),
-                   ),
+                    ),
+                  ),
                   20.verticalSpace,
                 ],
               ),
