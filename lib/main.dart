@@ -5,9 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:samplevarun/chatscreen.dart';
 import 'package:samplevarun/model/userloginmodel.dart';
+import 'package:samplevarun/createuserscreen.dart';
 import 'package:samplevarun/repo/userrepo.dart';
 
 import 'homescreen.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,12 +29,22 @@ class MyApp extends StatelessWidget {
         // Use builder only if you need to use library outside ScreenUtilInit context
         builder: (_, child) {
           return MaterialApp(
+            builder: (context, child) => ResponsiveBreakpoints.builder(
+              child: child!,
+              breakpoints: [
+                const Breakpoint(start: 0, end: 450, name: MOBILE),
+                const Breakpoint(start: 451, end: 800, name: TABLET),
+                const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+                const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+              ],
+            ),
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             home: MyHomePage(title: 'Flutter Demo Home Page'),
             routes: {
               'chat': (context) => ChatScreen(),
               '/home': (context) => HomeScreen(),
+              '/createUser': (context) => CreateUserScreen(),
             },
           );
         });
@@ -60,45 +72,52 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading:
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: AssetImage("images/logo.jpg"))),
+              ),
+            ),
+        centerTitle: false,
+        title: Text(
+          "Madhu Sudhan",
+          style: GoogleFonts.aclonicaTextTheme()
+              .headlineLarge!
+              .copyWith(color: Colors.indigo, fontSize: 38),
+        ),
+      ),
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width / 2,
-              height: MediaQuery.of(context).size.height,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          "https://media.istockphoto.com/id/1259958434/vector/the-girl-is-sitting-on-the-couch-and-holding-a-laptop-freelance-and-learning-at-home-autumn.jpg?s=1024x1024&w=is&k=20&c=1vUkxT3-XPaE8AtekiUtQ8va65vw1p5XSJYJbILY5Tc=")),
-                  color: Colors.white),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: AssetImage("images/logo.jpg"))),
-                    ),
-                  ),
-                  Positioned(
-                    top: 5,
-                    left: 50,
-                    child: Container(
-                      height: 50,
-                      child: Text(
-                        "Madhu Sudhan",
-                        style: GoogleFonts.aclonicaTextTheme()
-                            .headlineLarge!
-                            .copyWith(color: Colors.indigo, fontSize: 38),
-                      ),
-                    ),
-                  ),
-                ],
+
+            ResponsiveVisibility(
+              visible: true,
+              visibleConditions: [
+                Condition.smallerThan(name: TABLET),
+                Condition.smallerThan(name: DESKTOP),
+              ],
+              hiddenConditions: [
+                Condition.equals(name: MOBILE),
+                Condition.smallerThan(name: MOBILE),
+              ],
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            "assets/images/loginimage.jpg")),
+                    color: Colors.white),
+
               ),
             ),
             // right
@@ -118,12 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           .copyWith(fontSize: 32),
                     ),
                   ),
-                  Text(
-                    "WELCOME BACK",
-                    style: GoogleFonts.acmeTextTheme()
-                        .labelLarge!
-                        .copyWith(fontSize: 32),
-                  ),
+
                   30.verticalSpace,
                   Container(
                     width: MediaQuery.of(context).size.width * 0.35,
@@ -198,7 +212,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   10.verticalSpace,
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/createUser");
+                    },
                     child: RichText(
                       text: const TextSpan(
                         text:

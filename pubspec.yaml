@@ -39,6 +39,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   web_socket_channel: ^3.0.1
   shared_preferences:
+  responsive_framework:
 
 
 dev_dependencies:
