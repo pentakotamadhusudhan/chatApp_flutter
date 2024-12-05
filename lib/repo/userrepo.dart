@@ -105,6 +105,36 @@ class UserRepo {
     }
   }
 
+
+  Future<Data?> getFriendByIDRepo({required int friendID}) async {
+     Data? userdata;
+    try {
+      print("id ------------ $friendID");
+
+      Uri url = Uri.parse("http://192.168.2.82:8000/chat/getfriend/$friendID");
+      // var jsonBody = jsonEncode({"username": userName, "password": password});
+      final response = await http.get(url, headers: {
+        // Add your token here
+        'Content-Type': 'application/json', // Content type
+      });
+      print("response.statusCode${response.statusCode}");
+      print(response.body);
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body)['data'];
+        userdata = Data.fromJson(jsonResponse);
+        return userdata;
+      } else if (response.statusCode == 400) {
+        return userdata;
+      } else {
+        return userdata;
+      }
+    } catch (e) {
+      print("error catch $e");
+      return userdata;
+    }
+  }
+
+
   Future<void> sendMessageRepo(
       {
         required String message,
@@ -122,6 +152,7 @@ class UserRepo {
         "from_user": from_user,
         "to_user": to_user
       });
+
       final response = await http.post(url, body: jsonBody, headers: {
         // Add your token here
         'Content-Type': 'application/json', // Content type

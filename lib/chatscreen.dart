@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:samplevarun/createuserscreen.dart';
+import 'package:samplevarun/model/userloginmodel.dart';
 import 'package:samplevarun/repo/userrepo.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -32,10 +35,20 @@ class _ChatScreenState extends State<ChatScreen> {
   int timer = 0;
   ScrollController myController = ScrollController();
   final anchor = GlobalKey();
+ Data? friendDetails;
+  Future<void> getfriendDetails()async{
+    friendDetails =await  UserRepo().getFriendByIDRepo(friendID: widget.to_user!);
+    print("user model data $friendDetails");
+    setState(() {
+
+    });
+  }
+
+
   @override
   void initState() {
     super.initState();
-
+    getfriendDetails();
     _messageController = TextEditingController();
 
     // Initialize WebSocket channels
@@ -89,6 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
     print("url ${'ws://192.168.2.82:8000/ws/chat/${fromUser}/${toUser}/'}");
     return Scaffold(
       appBar: AppBar(
+        title: Text("${friendDetails!.firstName} ${friendDetails!.lastName}"),
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -166,7 +180,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (data['status'] == 200 && data['data'] != null) {
                     List chatMessages = data['data'];
                     return ListView.builder(
-                      key:  anchor,
+                      key: anchor,
                       controller: myController,
                       itemCount: chatMessages.length,
                       itemBuilder: (context, index) {
@@ -174,23 +188,29 @@ class _ChatScreenState extends State<ChatScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: fromUser == message['from_user']
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image:
-                                          AssetImage(fromUser==message['from_user']? "assets/images/logo.jpg" : "assets/images/google.png"),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.all(10.0),
+                              //   child: Container(
+                              //     height: 30,
+                              //     width: 30,
+                              //     decoration: BoxDecoration(
+                              //       shape: BoxShape.circle,
+                              //       image: DecorationImage(
+                              //         image: AssetImage(
+                              //             fromUser == message['from_user']
+                              //                 ? "assets/images/logo.jpg"
+                              //                 : "assets/images/google.png"),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              10.horizontalSpace,
                               Container(
+                                // width: MediaQuery.of(context).size.width * 0.8,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
@@ -204,11 +224,12 @@ class _ChatScreenState extends State<ChatScreen> {
                                     SizedBox(height: 5),
                                     Text(
                                         "From: ${message['from_user']} To: ${message['to_user']}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12, color: Colors.grey)),
                                   ],
                                 ),
                               ),
+                              10.horizontalSpace
                             ],
                           ),
                         );
@@ -235,7 +256,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(5),
+                          contentPadding:
+                              const EdgeInsets.only(left: 20, right: 10),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -245,14 +267,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                       UserRepo().sendMessageRepo(
-                         message: _messageController.text,
-                         from_user: fromUser.toString(),
-                         to_user: toUser.toString(),
-                       );
-                       _messageController.clear();
-                       myController.jumpTo(0.0);
-
+                        UserRepo().sendMessageRepo(
+                          message: _messageController.text,
+                          from_user: fromUser.toString(),
+                          to_user: toUser.toString(),
+                        );
+                        _messageController.clear();
+                        myController
+                            .jumpTo(MediaQuery.of(context).size.height + 10);
                       },
                       icon: Icon(Icons.send),
                     ),

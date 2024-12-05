@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: AssetImage("images/logo.jpg"))),
+                        image: AssetImage("assets/images/logo.jpg"))),
               ),
             ),
         centerTitle: false,
@@ -110,19 +110,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 Condition.smallerThan(name: MOBILE),
               ],
               child: Container(
-                width: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width ,
                 height: MediaQuery.of(context).size.height,
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(
-                            "assets/images/loginimage.jpg")),
-                    color: Colors.white),
+                // decoration: const BoxDecoration(
+                //     image: DecorationImage(
+                //         image: NetworkImage(
+                //             "assets/images/loginimage.jpg")
+                              ),
+                    // color: Colors.white),
 
-              ),
+              // ),
             ),
             // right
             Container(
-              width: MediaQuery.of(context).size.width / 2,
+              width: MediaQuery.of(context).size.width ,
               height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(color: Colors.white),
               child: Column(
@@ -140,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   30.verticalSpace,
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.35,
+                    width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.only(left: 50, right: 50),
                     child: TextFormField(
                       controller: userNameController,
@@ -152,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   20.verticalSpace,
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.35,
+                    width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.only(left: 50, right: 50),
                     child: TextFormField(
                       controller: passwordController,
@@ -166,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   30.verticalSpace,
                   SizedBox(
                     height: 40,
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width*0.45,
                     child: ElevatedButton(
                       onPressed: () async {
                       UserLoginModel? userLogiModel =   await UserRepo().loginRepo(
@@ -243,18 +244,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        SizedBox(
-                            height: 30,
-                            width: 30,
-                            child: Image(
-                                image:
-                                    NetworkImage("assets/images/google.png"))),
-                        SizedBox(
-                            height: 30,
-                            width: 30,
-                            child: Image(
-                                image:
-                                    NetworkImage("assets/images/facebook.png")))
+                        // SizedBox(
+                        //     height: 30,
+                        //     width: 30,
+                        //     child: Image(
+                        //         image:
+                        //             NetworkImage("assets/images/google.png"))),
+                        // SizedBox(
+                        //     height: 30,
+                        //     width: 30,
+                        //     child: Image(
+                        //         image:
+                        //             NetworkImage("assets/images/facebook.png")))
                       ],
                     ),
                   ),

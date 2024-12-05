@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       backgroundColor: Colors.white,
-      body:args== null ? Text("No data found"): Column(
+      body:args == null ? Text("No data found"): Column(
         children: [
           Text(
             'Person 1',
