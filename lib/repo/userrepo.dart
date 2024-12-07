@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/getallfriendsmodel.dart';
 import '../model/userloginmodel.dart';
 
 class UserRepo {
@@ -79,8 +80,8 @@ class UserRepo {
     }
   }
 
-  Future<List<Data>> getFriendsListRepo() async {
-    List<Data> userdata = [];
+  Future<GetAllFriendsModel?> getFriendsListRepo() async {
+    GetAllFriendsModel? userdata ;
     try {
       Uri url = Uri.parse("http://192.168.2.82:8000/chat/getfriends");
       // var jsonBody = jsonEncode({"username": userName, "password": password});
@@ -91,8 +92,8 @@ class UserRepo {
       print("response.statusCode${response.statusCode}");
       print(response.body);
       if (response.statusCode == 201 || response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body)['data'] as List;
-        userdata = jsonResponse.map((e) => Data.fromJson(e)).toList();
+        final  jsonResponse = json.decode(response.body);
+        userdata = GetAllFriendsModel.fromJson(jsonResponse);
         return userdata;
       } else if (response.statusCode == 400) {
         return userdata;
@@ -106,8 +107,8 @@ class UserRepo {
   }
 
 
-  Future<Data?> getFriendByIDRepo({required int friendID}) async {
-     Data? userdata;
+  Future<Datum?> getFriendByIDRepo({required int friendID}) async {
+    Datum? userdata;
     try {
       print("id ------------ $friendID");
 
@@ -118,10 +119,11 @@ class UserRepo {
         'Content-Type': 'application/json', // Content type
       });
       print("response.statusCode${response.statusCode}");
+      print("response.statusCode${url}");
       print(response.body);
       if (response.statusCode == 201 || response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body)['data'];
-        userdata = Data.fromJson(jsonResponse);
+        final jsonResponse = json.decode(response.body);
+        userdata = Datum.fromJson(jsonResponse);
         return userdata;
       } else if (response.statusCode == 400) {
         return userdata;

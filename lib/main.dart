@@ -7,8 +7,9 @@ import 'package:samplevarun/chatscreen.dart';
 import 'package:samplevarun/model/userloginmodel.dart';
 import 'package:samplevarun/createuserscreen.dart';
 import 'package:samplevarun/repo/userrepo.dart';
+import 'package:samplevarun/homescreen.dart';
 
-import 'homescreen.dart';
+import 'friendslistscreen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 void main() {
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
             title: 'Flutter Demo',
             home: MyHomePage(title: 'Flutter Demo Home Page'),
             routes: {
-              'chat': (context) => ChatScreen(),
+              'chat': (context) => ChatScreen(name: "",),
               '/home': (context) => HomeScreen(),
               '/createUser': (context) => CreateUserScreen(),
             },
