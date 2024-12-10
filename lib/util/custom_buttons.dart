@@ -10,7 +10,7 @@ Widget submitButton(
 }
     ){
   return SizedBox(
-    height: 40,
+    height: 30,
     width: width,
     child: ElevatedButton(
       onPressed: onpressed,
@@ -21,7 +21,7 @@ Widget submitButton(
         style: GoogleFonts.aBeeZeeTextTheme()
             .headlineLarge!
             .copyWith(
-            fontSize: 24,
+            fontSize: 16,
             fontWeight: FontWeight.w900,
             color: Colors.white),
       ),

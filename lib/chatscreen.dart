@@ -104,8 +104,8 @@ class _ChatScreenState extends State<ChatScreen> {
     fromUser = widget.from_user!;
     toUser = widget.to_user!;
     _chatChannel = WebSocketChannel.connect(
-        Uri.parse('ws://192.168.2.82:8000/ws/chat/${fromUser}/${toUser}/'));
-    print("url ${'ws://192.168.2.82:8000/ws/chat/${fromUser}/${toUser}/'}");
+        Uri.parse('ws://192.168.2.82:8000/ws/chat/$fromUser/$toUser/'));
+    print("url ${'ws://192.168.2.82:8000/ws/chat/$fromUser/$toUser/'}");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -152,7 +152,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  const Icon(Icons.adb_rounded, color: Colors.green),
+                                  const Icon(Icons.adb_rounded,
+                                      color: Colors.green),
                                   Text("Online: ${data['counter']}"),
                                 ],
                               );
@@ -262,7 +263,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             );
                           }
 
-                          return const Center(child: Text('Unknown data received.'));
+                          return const Center(
+                              child: Text('Unknown data received.'));
                         },
                       ),
                     ),
