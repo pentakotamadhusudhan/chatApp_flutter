@@ -4,4 +4,5 @@ class StaticUrl{
   static String createUrl = "$baseUrl"+"/chat/user";
   static String getfriendsUrl = "$baseUrl"+"/chat/getfriends";
   static String findFriendsUrl = "$baseUrl"+"/chat/findfriends";
+  static String userUpdateUrl = "$baseUrl"+"/chat/userupdate/";
 }

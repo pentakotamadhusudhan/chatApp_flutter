@@ -40,6 +40,8 @@ dependencies:
   web_socket_channel: ^3.0.1
   shared_preferences:
   responsive_framework:
+  image_picker:
+  intl:
 
 
 dev_dependencies:

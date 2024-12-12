@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               radius: 10, // Adjust to a value you find suitable
               backgroundColor: Colors.tealAccent,
-              backgroundImage:
+              backgroundImage: args.data?.profileImage == null ? AssetImage('assets/images/logo.jpg') :
                   NetworkImage("${StaticUrl.baseUrl}${args.data!.profileImage}"),
             ),
           ),
