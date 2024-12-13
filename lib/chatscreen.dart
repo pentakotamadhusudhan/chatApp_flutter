@@ -6,9 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:samplevarun/createuserscreen.dart';
 import 'package:samplevarun/model/userloginmodel.dart';
 import 'package:samplevarun/repo/userrepo.dart';
+import 'package:samplevarun/util/base_url.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'model/getallfriendsmodel.dart';
+import 'model/messagesModel.dart';
 
 class ChatScreen extends StatefulWidget {
   final int? from_user;
@@ -40,6 +42,8 @@ class _ChatScreenState extends State<ChatScreen> {
   ScrollController myController = ScrollController();
   final anchor = GlobalKey();
   Datum? friendDetails;
+  List chatMessages = [];
+
   Future<Datum?> getfriendDetails() async {
     print("user model data ");
     friendDetails =
@@ -56,14 +60,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Initialize WebSocket channels
     _counterChannel = WebSocketChannel.connect(
-        Uri.parse('ws://192.168.2.82:8000/ws/counter/'));
+        Uri.parse('${StaticUrl.webSocketUrl}counter/'));
     _timerChannel =
-        WebSocketChannel.connect(Uri.parse('ws://192.168.2.82:8000/ws/timer/'));
-
+        WebSocketChannel.connect(Uri.parse('${StaticUrl.webSocketUrl}timer/'));
     // Send initial messages to the WebSocket servers
     _counterChannel.sink.add(jsonEncode({"action": "minus"}));
     _timerChannel.sink.add(jsonEncode({"action": "increment"}));
-
     // Repeatedly send messages every 1 second (adjust interval as needed)
     _counterTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       _counterChannel.sink.add(jsonEncode({"action": "minus"}));
@@ -83,7 +85,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _timerTimer.cancel();
     super.dispose();
   }
-
   void sendMessage(String message) {
     UserRepo().sendMessageRepo(
       message: _messageController.text,
@@ -91,21 +92,13 @@ class _ChatScreenState extends State<ChatScreen> {
       to_user: toUser.toString(),
     );
   }
-
   @override
   Widget build(BuildContext context) {
-    // final args =
-    //     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    // print("fromuser2${args['from_user']}");
-    // print("touser2${args['to_user']}");
-    // getfriendDetails();
-    // fromUser = args['from_user'] as int;
-    // toUser = args['to_user'] as int;
     fromUser = widget.from_user!;
     toUser = widget.to_user!;
     _chatChannel = WebSocketChannel.connect(
-        Uri.parse('ws://192.168.2.82:8000/ws/chat/$fromUser/$toUser/'));
-    print("url ${'ws://192.168.2.82:8000/ws/chat/$fromUser/$toUser/'}");
+        Uri.parse('${StaticUrl.webSocketUrl}chat/$fromUser/$toUser/'));
+    print("url ${'${StaticUrl.webSocketUrl}chat/$fromUser/$toUser/'}");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -136,57 +129,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         fit: BoxFit.cover)),
                 child: Stack(
                   children: [
-                    // SafeArea widget for RealTimeCounterPage (or any other widget you want at the top)
-                    SafeArea(
-                      child: Column(
-                        children: [
-                          // Real-time Counter Stream
-                          StreamBuilder(
-                            stream: _counterChannel.stream,
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const Center(
-                                    child: Text('Waiting for data...'));
-                              }
-                              final data = jsonDecode(snapshot.data!);
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Icon(Icons.adb_rounded,
-                                      color: Colors.green),
-                                  Text("Online: ${data['counter']}"),
-                                ],
-                              );
-                            },
-                          ),
-
-                          // Real-time Timer Stream
-                          StreamBuilder(
-                            stream: _timerChannel.stream,
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const Center(
-                                    child: Text('Waiting for timer...'));
-                              }
-                              final data = jsonDecode(snapshot.data!);
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Icon(Icons.timer, color: Colors.blue),
-                                  Text("Timer: ${data['counter']}"),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Positioned ListView to display chat messages
                     Positioned(
                       left: 0,
                       right: 0,
-                      top: 120, // Adjusted for space between UI elements
+                      top: 10, // Adjusted for space between UI elements
                       bottom: 60, // Make room for the TextField at the bottom
                       child: StreamBuilder(
                         stream: _chatChannel.stream,
@@ -195,12 +141,10 @@ class _ChatScreenState extends State<ChatScreen> {
                             return const Center(
                                 child: Text('Waiting for messages...'));
                           }
-
                           final data = jsonDecode(snapshot.data!);
-
                           // Check if the response contains chat data
                           if (data['status'] == 200 && data['data'] != null) {
-                            List chatMessages = data['data'];
+                            chatMessages = data['data'];
                             return ListView.builder(
                               key: anchor,
                               controller: myController,
@@ -215,22 +159,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                             ? MainAxisAlignment.end
                                             : MainAxisAlignment.start,
                                     children: [
-                                      // Padding(
-                                      //   padding: const EdgeInsets.all(10.0),
-                                      //   child: Container(
-                                      //     height: 30,
-                                      //     width: 30,
-                                      //     decoration: BoxDecoration(
-                                      //       shape: BoxShape.circle,
-                                      //       image: DecorationImage(
-                                      //         image: AssetImage(
-                                      //             fromUser == message['from_user']
-                                      //                 ? "assets/images/logo.jpg"
-                                      //                 : "assets/images/google.png"),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
                                       10.horizontalSpace,
                                       Container(
                                         // width: MediaQuery.of(context).size.width * 0.8,
@@ -262,13 +190,11 @@ class _ChatScreenState extends State<ChatScreen> {
                               },
                             );
                           }
-
                           return const Center(
                               child: Text('Unknown data received.'));
                         },
                       ),
                     ),
-
                     // Positioned TextField at the bottom for sending messages
                     Positioned(
                       bottom: 0,
@@ -293,15 +219,14 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                             IconButton(
-                              onPressed: () {
-                                UserRepo().sendMessageRepo(
+                              onPressed: () async {
+                                MessageModel? messageModel =
+                                    await UserRepo().sendMessageRepo(
                                   message: _messageController.text,
                                   from_user: fromUser.toString(),
                                   to_user: toUser.toString(),
                                 );
-                                _messageController.clear();
-                                myController.jumpTo(
-                                    MediaQuery.of(context).size.height + 10);
+                                chatMessages.add(messageModel!.data!);
                               },
                               icon: const Icon(Icons.send),
                             ),

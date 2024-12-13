@@ -6,6 +6,7 @@ import 'package:samplevarun/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/getallfriendsmodel.dart';
+import '../model/messagesModel.dart';
 import '../model/userloginmodel.dart';
 import '../util/base_url.dart';
 import '../util/custome_pop_up.dart';
@@ -147,7 +148,7 @@ class UserRepo {
     }
   }
 
-  Future<void> sendMessageRepo({
+  Future<MessageModel?> sendMessageRepo({
     required String message,
     required String to_user,
     required String from_user,
@@ -170,13 +171,9 @@ class UserRepo {
       print(response.statusCode);
       print(response.body);
       if (response.statusCode == 201 || response.statusCode == 200) {
-        // final prefs = await SharedPreferences.getInstance();
-        // await prefs.setString('userName', userName);
-        // await prefs.setString('password', password);
-        // final getprefs = await SharedPreferences.getInstance();
-        // final counter = getprefs.getString('userName') ?? "NA";
-        // print("Counter: $counter");
-        // return UserLoginModel.fromJson(json.decode(response.body));
+      final res = jsonDecode(response.body);
+
+        return MessageModel.fromJson(res);
       } else if (response.statusCode == 400) {
         // return UserLoginModel.fromJson(json.decode(response.body));
       }
